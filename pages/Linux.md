@@ -1,7 +1,6 @@
 - Learning to navigate **files, create files, delete and copy files** 
   Best article to refer - [Filesystem](https://www.digitalocean.com/community/tutorials/basic-linux-navigation-and-file-management)
 - **Linux Basic Commands**
-  collapsed:: true
 	- `ln` Link (Unix) command
 		- The ln command is standard Unix command utility used to create ^^hard link^^ or ^^soft link^^ (symlink) to an existing file or directory.
 			- Hard link - Simply known as links are objects that associate the filename with the ^^inode^^ A given file on disk could have multiple links scattered through the directory hierarchy, with all of the links being equivalent, since they all associate with the same ^^inode^^. Creating a link therefore does not copy the contents of the file but merely causes another name to be associated with the same contents. Each time a hardlink is created, a link counter that is part of inode structure gets incremented; a file is not deleted until its reference count reaches zero.
@@ -108,7 +107,7 @@
 		  card-ease-factor:: 2.46
 		  card-last-reviewed:: 2022-04-25T07:40:36.412Z
 			- `find / -size +50M -size -100M`   _files greater than 50MB and less than 100 MB_
-		-
+			- `find path -size +MoreThanM -size -LessthanM`
 	- `ls` : Ls command or List command
 		- List files and directories in current working directory or path given.
 		- `-l` long format, permissions, number of hardlinks, owner, group, size etc
