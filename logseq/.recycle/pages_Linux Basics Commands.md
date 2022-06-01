@@ -1,0 +1,113 @@
+- Learning to navigate files, create files, delete and copy files 
+  Best article to refer - [Filesystem](https://www.digitalocean.com/community/tutorials/basic-linux-navigation-and-file-management)
+-
+- `ln` Link (Unix) command
+  collapsed:: true
+	- The ln command is standard Unix command utility used to create ^^hard link^^ or ^^soft link^^ (symlink) to an existing file or directory.
+		- Hard link - Simply known as links are objects that associate the filename with the #inode. A given file on disk could have multiple links scattered through the directory hierarchy, with all of the links being equivalent, since they all associate with the same #inode. Creating a link therefore does not copy the contents of the file but merely causes another name to be associated with the same contents. Each time a hardlink is created, a link counter that is part of inode structure gets incremented; a file is not deleted until its reference count reaches zero.
+		  `ln source_file targetlink`
+		- Symbolic links : Symbolic links are special files which, when encountered during pathname resolution, modify the pathname resolution to be taken to the location which the symbolic link contains. The content of the symbolic link is therefore the destination path string, which can also be examined using the readlink command line utility. The symbolic link may contain an arbitrary string which does not refer to the location of an existing file. Such a symbolic link will fail until a file is created at the location which is contained by the symbolic link. By contrast, a symbolic link to an existing file will fail if the existing file is moved to a different location (or renamed)
+		  `ln -s targetfile shortcut`
+		-
+- `cp` : Copy command
+  collapsed:: true
+	- cp is a Linux shell command to copy files and directories.
+	  Syntax  $ cp [options] source dest.
+	- cp command options
+	  collapsed:: true
+		- `cp main.c bak` Copy single file to directory
+		- `cp main.c def.h /home/usr/rapid/` Copy 2 files main.c and def.h to absolute path directory
+		- `cp *.c bak` Copy all .C files to directory
+		- `cp src /home/usr/rapid/` Copy directory src to absolute path directory
+		- `cp -R dev bak` Copy files recursively to subdirectory bak
+		- `cp -f test.c bak` Force copy files
+		- `cp -i test.c bak` Interactive prompt before file overwrite
+		- `cp -u * bak` Copy only newer files to destination _directory_ bak
+		-
+- `cat` : Cat command
+  collapsed:: true
+	- `cat` is a standard Unix utility that reads files sequentially, writing them to standard output (STDOUT). Name derived from concatenate files.
+	- `cat [options] [file_names]`
+	- `cat file1.txt` Displays contents of files
+	- `cat file1.txt file2.txt` Concatenate two text files and display result in the terminal
+	- `cat file1.txt file2.txt > newcombinedfile.txt` Concatenate two text files and create new file
+	- `cat >newfile.txt` Create a file called newfile.txt. Type desired input and press CTRL+D to finish
+	- `cat file1.txt > file2.txt` Copy the contents of file1.txt to file2.txt
+	- `cat file1.txt >> file2.txt` Append content of file1.txt to file2.txt
+	- `cat file1.txt file2.txt file3.txt | sort > test4` Concatenate the files, sort the complete set of lines and write the output to new file
+	- `cat file1.txt | grep example` Highlight instances of the word example in file1.txt
+	-
+	- Do not use useless cat commands. e.g. cat "$file" | grep "$pattern" can be written as grep "$pattern" "$file"
+	-
+- `find` : find command
+  collapsed:: true
+	- Finding a File in Linux by Name or Extension #card
+	  collapsed:: true
+		- `find /home/username/ -name "*.err"`
+		- `find /home/username/ -iname ".err"` _ignorecase here_
+	- Using command `find` commands and syntax to find file in linux #card
+	  card-last-interval:: -1
+	  card-repeats:: 1
+	  card-ease-factor:: 2.5
+	  card-next-schedule:: 2022-04-20T18:30:00.000Z
+	  card-last-reviewed:: 2022-04-20T09:48:29.668Z
+	  card-last-score:: 1
+	  collapsed:: true
+		- `find options starting/path expression`
+		- `find -03 -L /var/www/ -name ".html"`
+	- Finding file with modification time and accessed time #card
+	  card-last-interval:: 4
+	  card-repeats:: 1
+	  card-ease-factor:: 2.6
+	  card-next-schedule:: 2022-04-24T09:48:44.767Z
+	  card-last-reviewed:: 2022-04-20T09:48:44.768Z
+	  card-last-score:: 5
+	  collapsed:: true
+		- `find / -name "*conf" -mtime -7`
+		- `find /home/example/user -name "*conf" -mtime -3`
+		- `find / -mtime +50 -mtime -100`   _50days back and less than 100 days_
+		- `find / -atime 50`
+	- Using `grep` to Find a File in Linux Based on content #card
+	  collapsed:: true
+		- `find . -type f -exec grep "example" '{}' \; -print`
+		  This searches every object in the current directory hierarchy (.) that is a file (-type f) and then runs the command grep "example" for every file that satisfies the conditions. The files that match are printed on the screen (-print). The curly braces ({}) are a placeholder for the find match results. The {} are enclosed in single quotes (') to avoid handing grep a malformed file name. The -exec command is terminated with a semicolon (;), which should be escaped (\;) to avoid interpretation by the shell.
+	- How to find and process a File in Linux #card
+	  card-last-interval:: 4
+	  card-repeats:: 1
+	  card-ease-factor:: 2.6
+	  card-next-schedule:: 2022-04-24T09:49:01.501Z
+	  card-last-reviewed:: 2022-04-20T09:49:01.501Z
+	  card-last-score:: 5
+	  collapsed:: true
+		- `find . -name "rc.conf" -exec chmod o+r '{}' \;`
+	- How to find and delete a file in Linux #card
+	  card-last-interval:: 4
+	  card-repeats:: 1
+	  card-ease-factor:: 2.6
+	  card-next-schedule:: 2022-04-24T09:48:51.127Z
+	  card-last-reviewed:: 2022-04-20T09:48:51.127Z
+	  card-last-score:: 5
+	  collapsed:: true
+		- `find . -name "*.bak" -delete`
+	- Find files with permission e.g. 777 #card
+	  card-last-interval:: 4
+	  card-repeats:: 1
+	  card-ease-factor:: 2.6
+	  card-next-schedule:: 2022-04-24T09:48:03.779Z
+	  card-last-reviewed:: 2022-04-20T09:48:03.781Z
+	  card-last-score:: 5
+	  collapsed:: true
+		- `find . -type f -perm 0777 -print`
+		- `find . -type f ! -perm 777`
+	- Find files by size #card
+	  card-last-interval:: 4
+	  card-repeats:: 1
+	  card-ease-factor:: 2.6
+	  card-next-schedule:: 2022-04-24T09:48:14.936Z
+	  card-last-reviewed:: 2022-04-20T09:48:14.937Z
+	  card-last-score:: 5
+	  collapsed:: true
+		- `find / -size +50M -size -100M`   _files greater than 50MB and less than 100 MB_
+	-
+-
+-
