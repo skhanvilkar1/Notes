@@ -61,6 +61,15 @@
  {:block/name "done",
   :block/created-at 1650216664523,
   :block/updated-at 1650216664523}
+ {:block/name "draws/2022-05-19-23-10-14.excalidraw",
+  :block/created-at 1654161634923,
+  :block/updated-at 1654161634923}
+ {:block/name "draws/2022-05-25-22-41-58.excalidraw",
+  :block/created-at 1654161634922,
+  :block/updated-at 1654161634922}
+ {:block/name "draws/2022-05-25-23-03-24.excalidraw",
+  :block/created-at 1654161634923,
+  :block/updated-at 1654161634923}
  {:block/name "favorites",
   :block/created-at 1650216664522,
   :block/updated-at 1650216664522}
@@ -72,13 +81,16 @@
   :block/updated-at 1650437880117}
  {:block/name "jun 1st, 2022",
   :block/created-at 1654071724704,
-  :block/updated-at 1654071724704}
+  :block/updated-at 1654079903767}
+ {:block/name "jun 2nd, 2022",
+  :block/created-at 1654152601876,
+  :block/updated-at 1654152601876}
  {:block/name "later",
   :block/created-at 1650216664522,
   :block/updated-at 1650216664522}
  {:block/name "linux",
   :block/created-at 1651039531626,
-  :block/updated-at 1653043174496}
+  :block/updated-at 1654084695695}
  {:block/name "management bridge process",
   :block/created-at 1652935003941,
   :block/updated-at 1652935003941}

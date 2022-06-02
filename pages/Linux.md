@@ -658,7 +658,6 @@
 	- Kernel level -> when you don't have any login and need to change root password -> https://phoenixnap.com/kb/how-to-change-root-password-linux
 	-
 - **PAM** - Pluggable Authentication Module
-  collapsed:: true
 	- Gives flexibility on how we want certain utilities of Linux on how to authenticate.
 	- PAM related files -> `etc/pam.d/`
 	- edit su file here

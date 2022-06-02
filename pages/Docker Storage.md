@@ -1,0 +1,19 @@
+- Docker Volume
+	- Use command `docker volume inspect data_volume `
+	- Volume not in use can be removed by -> `docker volume remove data_volume` , cannot remove used volume
+	- `docker volume prune`
+	- Volumes are mounted as Read-write by default if no options are specified , verify by `docker container inspect containername` ; under Mounts check "RW" value, its True usually
+	- Read-only volume -> pass read only option 
+	  E.g. `docker container run --mount source=data_vol1,destination=/var/www/html/index.html,readonly httpd`
+	- `docker volume ls`  -> lists volumes
+	- `docker volume create testvol` --> creates a volume on docker host
+	- `docker container run -itd --name=test -v testvol:yogesh centos:7`
+	- To verify -> `docker exec -it test /bin/bash` -> run command `df -h | grep -i yogesh`
+	- docker volume inspect testvol -> will show path of volume on docker host under "mountpoint"
+	- if you remove the container, data is preserved the volume which is on host.
+	- --mount replaces -v which is depricated.
+	- `docker container run -itd --name=testagain --mount source=testvol, destination=/yogesh centos:7`
+	- verify that data still remains. This is called volume Mount method.
+	- To free volume from container -> Stop and remove container
+	- Then you can remove testvol -> `docker volume remove testvol`
+	- All unused volumes can be deleted by `docker volume prune` command
