@@ -16,4 +16,10 @@
 	- verify that data still remains. This is called volume Mount method.
 	- To free volume from container -> Stop and remove container
 	- Then you can remove testvol -> `docker volume remove testvol`
-	- All unused volumes can be deleted by `docker volume prune` command
+	- All unused volumes can be deleted by `docker volume prune` command.
+- How to mount a directory from host to docker -> Use **Bind**
+	- Bind mount method
+		- `docker container run -itd --mount type=bind,source=/data,destination=/yogesh centos:7`
+		- Note that command `docker volume ls` will show no results as this was a directory bind not a volume mount
+		-
+-

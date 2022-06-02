@@ -762,4 +762,66 @@
 			- `sudo systemctl set-ntp true`
 			-
 -
--
+- **Service Configuration**
+	-
+	- Configuring a caching DNS server
+	- Why is DNS caching useful -> A computer needs to find out how it can reach website e.g. google.com
+	  Goes to ISP's DNS server (say this was server launched 2secs ago it does not know anything)
+	  Query goes to next DNS and next and next, once IP address is found it sends downstream and is cached.
+	- Next Time -> When launched again -> we find the cached entry quicker.
+	- Consider same locally, for high intensity caching to reduce delay, we want to enable our own caching server.
+	- **bind** is a popular DNS utility
+	- To install **bind** -> `sudo dnf install bind bind-utils` //two software packages bind and bind-utils , utils has extra programs.
+	- bind config file is located at `/etc/named.conf/`. There are 100s of options to use, Focus on essential
+	- For more refer `man named.conf`
+	- Check current IP address of server -> `ip a`
+	- To make changes to bind config -> `sudo vim /etc/named.conf`
+		- listen-on port 53 {127.0.01;};               // bind is configured to listen on loopback address. This means it will accept connections from local host only, for other connections change to
+		- listen-on port 53 {127.0.0.1; 192.168.17;};
+		- for any network --> listen-on port 53 {any;};
+		- allow-query {localhost;};                  //for programs on local host only requesting DNS information local connections only, for others ->
+		- allow-query {localhost; 192.168.0.0/24;};             //local and other network
+		- allow-query {any;};                                               // for any network
+		- recursion yes;                                    // set to yes by default, helps bind server to get data from other DNS servers
+	- Next start bind and it auto starts after reboot by --> `sudo systemctl start bind.service` & sudo `systemctl enable bind.service`
+	- Add firewall rule -> `sudo firewall-cmd --add-service=dns`      // this is temporary
+	- Add firewall rule -> `sudo firewall-cmd --add-service=dns --permanent`      // this is permanent
+	- To check -> `dig @127.0.0.1 google.com` ==`dig @localhost google.com`
+		- first time query time check ; run it again, query time will be 0 seconds. because now the data is cached.
+		- In its default configuration, it automatically caches. we do not give explicit instructions
+	- **Maintaining a DNS zone**
+		- DNS server is also called name server
+		- Consider we bough DNS example.com
+		- A zone can group DNS data of specific domain, we can have zone for example.com and other for other domain
+		- Edit bind main config file -> `sudo vim /etc/named.conf`
+			- Go to end of file.
+			- check for block starting with zone
+			- add zone "example.com" IN {
+			      type master;                                        // this is our master server
+			      file "example.com.zone";
+			  };
+			- Save the file and add the zone file.
+			- sudo ls /var/named/ --> we can see a file called named.localhost
+			- `sudo cp --preserve=ownership /var/named/named.localhost /var/named/example.com.zone`
+			- Edit the zone file now
+			- `sudo vim /var/named/example.com.zone`
+			- TTL is set to 1D, can change to 1H // 1 Day to 1 Hour
+			- example.com.  A  203.20.113.30
+			- @ IN SOA @ administrator.example.com.                     // . in end is not required for relative domain names. IN stands for INTERNET, can be omitted, its IN class.
+			- @ (two tabs) NS ns1.example.com.                   // we are telling world what is our NameServer for example.com domain for DNS entries
+			- @ (two tabs) NS ns2.example.com.
+			- Devices do not know where ns2.example.com are located , so we add A records for these entries
+			- ns1 (two tabs) A(two tabs) 10.11.12.9
+			- ns2 (two tabs) A (two tabs)10.11.12.10              //relative domain names do not need .
+			- @ (two tabs) A (two tabs) 203.0.113.15
+			- www (two tabs) A (two tabs) 203.0.113.15
+			- www CNAME 203.0.113.15                              // CNAME is like a redirection. Keep CNAME only not both www entries.
+			- example.com. (two tabs) MX 10 mail.example.com
+			                                             MX 20 mail2.example.com                 // 10, 20 are priorities
+			- mail (two T.) A 203.0.113.80
+			- mail2 (two T) A 203.0.113.81
+			- server1 (two tabs)AAAA 2001:DB8:10::1
+			- example.com.    TXT    "Can write anything here"
+			- For bind to recognize above changes -> `sudo systemctl restart named.service`
+			- `dig @localhost`
+	-
