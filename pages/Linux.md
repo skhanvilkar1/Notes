@@ -1,6 +1,7 @@
 - Learning to navigate **files, create files, delete and copy files** 
   Best article to refer - [Filesystem](https://www.digitalocean.com/community/tutorials/basic-linux-navigation-and-file-management)
 - **Linux Basic Commands**
+  collapsed:: true
 	- `ln` Link (Unix) command
 		- The ln command is standard Unix command utility used to create ^^hard link^^ or ^^soft link^^ (symlink) to an existing file or directory.
 			- Hard link - Simply known as links are objects that associate the filename with the ^^inode^^ A given file on disk could have multiple links scattered through the directory hierarchy, with all of the links being equivalent, since they all associate with the same ^^inode^^. Creating a link therefore does not copy the contents of the file but merely causes another name to be associated with the same contents. Each time a hardlink is created, a link counter that is part of inode structure gets incremented; a file is not deleted until its reference count reaches zero.
@@ -763,6 +764,7 @@
 			-
 -
 - **Service Configuration**
+  collapsed:: true
 	-
 	- Configuring a caching DNS server
 	- Why is DNS caching useful -> A computer needs to find out how it can reach website e.g. google.com
