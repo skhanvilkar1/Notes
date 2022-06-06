@@ -659,6 +659,7 @@
 	- Kernel level -> when you don't have any login and need to change root password -> https://phoenixnap.com/kb/how-to-change-root-password-linux
 	-
 - **PAM** - Pluggable Authentication Module
+  collapsed:: true
 	- Gives flexibility on how we want certain utilities of Linux on how to authenticate.
 	- PAM related files -> `etc/pam.d/`
 	- edit su file here
@@ -764,7 +765,6 @@
 			-
 -
 - **Service Configuration**
-  collapsed:: true
 	-
 	- Configuring a caching DNS server
 	- Why is DNS caching useful -> A computer needs to find out how it can reach website e.g. google.com
@@ -826,4 +826,62 @@
 			- example.com.    TXT    "Can write anything here"
 			- For bind to recognize above changes -> `sudo systemctl restart named.service`
 			- `dig @localhost`
+	- **Configuring EMAIL aliases**
+		- Setting an entire email infra is complicated
+		- Easy to setup a PoC to check how aliases work
+		- `sudo dnf install postfix` and start and enable it // postfix is an email service
+		- To test -> `sendmail aaraon@localhost <<< "Hello, Test email"`
+		- To check where email is stored `cat /var/spool/mail/aaron`
+		- Now to configure aliases to aarons mail box
+			- Defined in `/etc/aliases`
+			- `sudo nano /etc/aliases`
+			- add this --> `advertising: aaron`
+			- Save the file
+			- Inform postfix of added new aliases - > `sudo newaliases`
+			- `sendmail advertising@localhost <<< "Hello new "`
+			- can also have a clone for three different mailboxes by
+			  adding this entry in /etc/aliases 
+			  `contact: aaron,john,jane`
+			- To forward somewhere else add this entry 
+			  `advertising:aaron@somecompany.com`
+		-
+	- **Configuring IMAP and IMAPS service**
+		- Once we receive an email , we need to read it.
+		- Internet Messages Access Protocol, need to read it via Oulook or similar apps
+		- Client server synchronization
+		- IMAP does not encrypt, IMAPS is IMAP over SSL, all network traffic is encrypted.
+		- Install -> `sudo dnf install dovecot`
+		- Now start using `systemctl start dovecot` and enable `systemctl enable dovecot`
+		- `sudo firewall-cmd --add-service=imap`
+		- `sudo firewall-cmd --add-service=imaps`
+		- `sudo firewall-cmd --runtime-to-permanent`
+		- check all config files at `/etc/dovecot/conf.d`
+	- **Configuring SSH Servers Clients**
+		- Server already runs OpenSSH daemon
+		- Config file `/etc/ssh/sshd_config` -> d refers to daemon, there is also a ssh config file for client, that can be found `/etc/ssh/ssh_config`
+		- `sudo nano /etc/ssh/sshd_config`
+		- first important setting -> port number on which ssh daemon accepts incoming
+		- `Port 22` -> commented , want to change uncomment it and change to whichever port you want
+		- check man sshd_config , use search /Family , go to AddressFamily
+		- if we want to only accept IPV4 connections, uncomment `AddressFamily` and use inet4
+		- By default it listens for all available IPs
+		- we can change to Listen to as well ->`ListenAddress 10.11.12.9`
+		- search man page for `PermitRootLogin` -> default value is yes.
+		- `PasswordAuthentication yes` is default , can change to no by uncommenting. Users can only login with SSH keys which is more secure.
+		- To make single exception add this line below it
+		- `Match User aaron
+		         PasswordAuthentication yes`
+		- search for x11forarding , default is set to yes, we can disable it globally.
+		- sudo systemctl reload sshd.service
+	- **What about Client configuration ?**
+		- Client keeps some file in .ssh directory in home
+		- ls -a goto  `~/.ssh`    --> Unix like systems directory
+		- Windows its `C:\Users\aaron/.ssh`
+		- man ssh_config
+		- create a new file in ~/.ssh/ directory called config
+			- Host centos
+			           Hostname 10.11.12.9
+			           Port 22
+			           User aaron
+		- chmod 600 ~/.ssh/config
 	-

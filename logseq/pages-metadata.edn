@@ -76,6 +76,13 @@
  {:block/name "favorites",
   :block/created-at 1650216664522,
   :block/updated-at 1650216664522}
+ {:block/name "how nuance's culture contributed to my growth",
+  :block/created-at 1650437879587,
+  :block/updated-at 1654409001280}
+ {:block/name
+  "how nuance's culture contributed to my growth-pun-skhanvil01",
+  :block/created-at 1654409003447,
+  :block/updated-at 1654409003447}
  {:block/name "in-progress",
   :block/created-at 1650216664523,
   :block/updated-at 1650216664523}
@@ -88,6 +95,9 @@
  {:block/name "jun 2nd, 2022",
   :block/created-at 1654152601876,
   :block/updated-at 1654152601876}
+ {:block/name "jun 5th, 2022",
+  :block/created-at 1654407021289,
+  :block/updated-at 1654407021289}
  {:block/name "later",
   :block/created-at 1650216664522,
   :block/updated-at 1650216664522}
@@ -142,9 +152,6 @@
  {:block/name "now",
   :block/created-at 1650216664523,
   :block/updated-at 1650216664523}
- {:block/name "nuance experience",
-  :block/created-at 1650437879587,
-  :block/updated-at 1653034471234}
  {:block/name "skel",
   :block/created-at 1653041622990,
   :block/updated-at 1653041622990}
