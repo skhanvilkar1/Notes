@@ -177,7 +177,6 @@
 	- `uniq` : remove repeating lines which are adjacent only
 	- `sort` : sorts
 - Searching with `grep` with simple patterns
-  collapsed:: true
 	- Syntax : grep [options] 'search_pattern' file
 	- grep 'CentOS' /etc/os-release
 	- grep -i 'centos' /etc/os-release             //i stands for ignore case
@@ -189,7 +188,6 @@
 	- grep -oi 'centos' /etc/os-release             // matches only words and displays only matches
 	-
 - **Regular expressions** - Used to search with complex search conditions.
-  collapsed:: true
 	- Grep is original Grep and it understands basic regular expressions and basic patterns. Glob or wild card.
 	- When we grep sometimes we get a lot of other details were the pattern is present.
 	- Here we will discuss all characters in basic expressions.
@@ -200,7 +198,6 @@
 		- grep 'sam$' /etc/login
 		- only gives lines that end with sam
 	- Match ^^any one^^ character, use operator `.`
-	  collapsed:: true
 		- grep -r 'c.t' /etc
 		- grep -wr `c.t` /etc  //matches only word, no partial word matches
 		- What if I want to match the character which is a regex operator. ? Escape \
@@ -209,17 +206,14 @@
 				- e.g. grep -wr '\\.' /etc/login.txt
 				-
 	- Match the ^^previous Element 0 (zero) or More^^ Times: Use character '\*'. Element before it is optional to exist.
-	  collapsed:: true
 		- e.g. let* == le_ttt_
 	- Match ^^The Previous Element 1 or More Times^^ use character `+`
-	  collapsed:: true
 		- To use + as an operator : 
 		  $ grep -r '0\\+' /etc/
 		- By default grep uses basic regular expressions. So for using meta characters to use their special meaning, use backslash before it. Hence use egrep or **Extended regular expression to avoid back slash on regex operators.**
 	-
 	-
 - **Extended Regular expressions**. refer documenation at https://regexr.com
-  collapsed:: true
   $ grep -Er '0+' /etc/ == $ egrep r '0+' /etc/
 	- ^^Previous Element can exist this many times^^ :  `{}` parenthesis brackets
 		- egrep -r '0{3}' /etc : matches exactly 3 0s
@@ -237,7 +231,6 @@
 		- egrep -r `enabled|disabled` /etc
 		- egrep -r 'enabled? | disabled?' /etc
 	- Range or sets : []
-	  collapsed:: true
 		- to find cat or cut use - egrep -r 'c[au]t' /etc/login
 		- `$ egrep -r '/dev/.*' /etc/`             -> . is any character, * any number of characters plus previous one any. Its greedy gives various results not ideal.
 		- `$ egrep -r '/dev/[a-z]*' /etc/`                -> Cannot catch digits here
@@ -296,7 +289,6 @@
 		- `$ sudo dd if=/dev/vda of=diskimage.raw bs=1M status=progress`
 		- To restore disk image , just reverse the if and of labels
 - **Redirection** in Linux
-  collapsed:: true
 	- If a program knows its input, it needs to know where to send its output
 	- Output is of two types, successful and unsuccessful output (errors,warnings etc. )
 	- StdIn < , Stdout 1> , Stderr 2>
@@ -440,7 +432,6 @@
 			- lastlog
 	-
 - **Scheduling JOB : CRONTABS | ANACRON **
-  collapsed:: true
 	- Three main tools to set up scheduled Tasks 1. CRON 2. ANACRON (only works with days) 3. AT
 	- 1. **CRON**
 	  `cat /etc/crontab` --> Below is what you would see
@@ -763,8 +754,8 @@
 			- `timedatectl`
 			- `sudo systemctl set-ntp true`
 			-
--
 - **Service Configuration**
+  collapsed:: true
 	-
 	- Configuring a caching DNS server
 	- Why is DNS caching useful -> A computer needs to find out how it can reach website e.g. google.com
@@ -792,6 +783,7 @@
 		- first time query time check ; run it again, query time will be 0 seconds. because now the data is cached.
 		- In its default configuration, it automatically caches. we do not give explicit instructions
 	- **Maintaining a DNS zone**
+	  collapsed:: true
 		- DNS server is also called name server
 		- Consider we bough DNS example.com
 		- A zone can group DNS data of specific domain, we can have zone for example.com and other for other domain
@@ -827,6 +819,7 @@
 			- For bind to recognize above changes -> `sudo systemctl restart named.service`
 			- `dig @localhost`
 	- **Configuring EMAIL aliases**
+	  collapsed:: true
 		- Setting an entire email infra is complicated
 		- Easy to setup a PoC to check how aliases work
 		- `sudo dnf install postfix` and start and enable it // postfix is an email service
@@ -846,6 +839,7 @@
 			  `advertising:aaron@somecompany.com`
 		-
 	- **Configuring IMAP and IMAPS service**
+	  collapsed:: true
 		- Once we receive an email , we need to read it.
 		- Internet Messages Access Protocol, need to read it via Oulook or similar apps
 		- Client server synchronization
@@ -857,8 +851,9 @@
 		- `sudo firewall-cmd --runtime-to-permanent`
 		- check all config files at `/etc/dovecot/conf.d`
 	- **Configuring SSH Servers Clients**
+	  collapsed:: true
 		- Server already runs OpenSSH daemon
-		- Config file `/etc/ssh/sshd_config` -> d refers to daemon, there is also a ssh config file for client, that can be found `/etc/ssh/ssh_config`
+		- Config file `/etc/ssh/sshd_config` -> **d refers to daemon**, there is also a ssh config file for client, that can be found `/etc/ssh/ssh_config`
 		- `sudo nano /etc/ssh/sshd_config`
 		- first important setting -> port number on which ssh daemon accepts incoming
 		- `Port 22` -> commented , want to change uncomment it and change to whichever port you want
@@ -869,11 +864,14 @@
 		- search man page for `PermitRootLogin` -> default value is yes.
 		- `PasswordAuthentication yes` is default , can change to no by uncommenting. Users can only login with SSH keys which is more secure.
 		- To make single exception add this line below it
-		- `Match User aaron
-		         PasswordAuthentication yes`
+		- ```
+		  Match User aaron
+		         PasswordAuthentication yes
+		  ```
 		- search for x11forarding , default is set to yes, we can disable it globally.
 		- sudo systemctl reload sshd.service
 	- **What about Client configuration ?**
+	  collapsed:: true
 		- Client keeps some file in .ssh directory in home
 		- ls -a goto  `~/.ssh`    --> Unix like systems directory
 		- Windows its `C:\Users\aaron/.ssh`
@@ -884,4 +882,119 @@
 			           Port 22
 			           User aaron
 		- chmod 600 ~/.ssh/config
+	- **SSH Keys**
+	  collapsed:: true
+		- Generate a private and public key on client side
+		- `ssh-keygen`   // can use options with it, but this commands work
+		- private key is save at ~./ssh/ its saved as `id_rsa`
+		- public key is saved as `id_rsa.pub`
+		- Now we have to copy the public key to the server we want to login
+		- How to copy ? Multiple ways
+		  1. ssh-copy-id username@severip  //content of public key will be moved to username's home directory on the server and stored in `.ssh/authorized_keys`
+		  2. Other way is edit the authorized keys manually the contents of public key to this file
+		- whoever has private key to this public key can login
+		-
+		-
+		-
+		-
+	- **HTTPS PROXY**
+		- Commonly used proxy daemon available is squid.
+		- Restrict access to the http proxy server
+		- `sudo dnf install squid`
+		- `sudo systemctl start squid` and enable the service as well.
+		- add firewall rule -> `sudo firewall-cmd --add-service=squid --permanent`
+		- `sudo vim /etc/squid/squid.conf` --> check access control list
+		- acl localnet src xyz ---->
+		- acl localnet src 10.11.12.0
+		- acl external src 203.0.113.0/24
+		- They don't actually any rules, they are defined filters but do not apply it
+		- Deny request to unsafe ports `http_access deny !Safe_ports`
+		- To apply changes reload --> `sudo systemctl reload squid.service`
+		- This is graceful , restart is abruptive
+	- ****
+	-
+	-
+- **Storage**
+	- **fdisk and cfdisk**
+	  collapsed:: true
+		- List, create, delete and modify physical storage partitions.
+		  collapsed:: true
+			- To see what partitions exist on a linux system -> `lsblk`
+				- What we see in output are block devices. Places where linux can store data.
+				- Only ones that have word part are partitions.
+				- Devices in focus sda and its two partitions sda1 and sda2
+				- s comes from serial.
+				- last letter gives you hint of how many parts. Last letter makes it easy to know which disk and what partition it.
+				- sda is first disk, sda1 is 1st part and sda2 is second partition
+				- All block devices are found in `/dev` directory
+				-
+		- `sudo fdisk --list /dev/sda` --> fdisk is pre installed partition utility
+		- sudo is needed to special permissions
+		- A storage divided into sector. Sector is divided into 512 bytes
+		- Bootloader area 0 to 2047 , first part sector will start from 2048
+		- fdisk can be used to delete and create partitions
+		- sudo cfdisk /dev/sdb  ---> pick gpt
+		- Imagine you want to create two partitions 8 GB and 2 GB
+		- Navigate to free space and select NEW button and select 8 GB , navigate up and down and select further for further functions.
+		- Press down to remaining free space and parititon that to into 2 GB and hit enter.
+		- Navigate to first partition -> go to resize and you can change from 8 GB to 4 GB --> now you will have some free space again and new resized part
+		- now you may have sdb1 , sdb2  and sdb3 4 GB, 2GB and 4GB respectively (depends)
+		- Go to SORT option and it will reorder the partitions in a natural way sdb1, sdb2 and sdb3 might now look 4G , 4 G and 2G respectively
+		- Go to TYPE button after selecting 2G disk. and select SWAP option.
+		- Go to WRITE option and write the partition table to DISK. type yes and changes are permanent.
+		- QUIT cfdisk
+		- Now check lsblk and you can see your changes have been made.
+	- **Configure and manage swap space**
+		- How to create a swap partition? Swap is area to move temporary some data from memory
+		- Create and Manage Swap space -> Use of Swap space same as windows
+			- Move unused data from RAM to Swap to free up memory
+			- To check if system has any swap areas `swapon --show`
+			- We can add more partitions as swap
+			- lsblk - check partitions , identify partition with no data
+			- `sudo mkswap /dev/vdb3` ---> tells linux that use this as swap
+			- `swapon --show`
+			- If we reboot , this partition will not be used as swap again.
+			- To stop partition to be used as swap ->`swapoff /dev/vdb3`
+			- `sudo dd if=/dev/zero of=/swap bs=1M count=128`  --> bs is block size , tells dd to write 1M block 128 times
+			- add parameter `status=progress` to see progress
+			- `sudo chmod 600 /swap`
+			- sudo mkswap /swap
+			- sudo swapon /swap
+			-
+			-
+	- **Create and configure file systems**
+		- `sudo mkfs.ext4 /dev/sdb1`
+		- man mkfs.ext4 and man mkfs.xfs --> read man pages
+	- **Configure systems to mount file systems at or during boot**
+		- `sudo mount /dev/vdb1 /mnt/` --> to mount FS
+		- `sudo umount /mnt`
+	- **On Demand Mounting**
+		- AutoFS 
+		  `sudo dnf install autofs`
+		- NFS -> Network File Sharing
+		  `sudo dnf install nfs-utils`
+			- Tell NFS server which directories to share with network
+			- `sudo vim /etc/exports` -> /etc 127.0.0.1(ro) , ro option makes it read only
+			- `sudo systemctl reload nsf-server.service`
+		- For Auto FS to mount NFS shares
+			- `sudo vim /etc/auto.master`
+				- `/shares/ /etc/auto.shares --timeout=400`
+			- `sudo vim /etc/auto.shares`
+				- `mynetworkshare -fstype=auto 127.0.0.1:/etc`
+			- `sudo systemctl reload autofs`
+	- **Filesystem Features and Options** (Complete later)
+	- findmnt -t xfs,ext4
+	-
+	- **Logical Volume Manager**
+		- `sudo pvcreate /dev/sdc /dev/sdd`
+		- `sudo pvs` --> see what physical volumes are currently attached
+		- `sudo vgcreate my_volume /dev/sdc /dev/sdd` --> adding two disks to volume
+		- sudo pvcreate /dev/sdf
+		- sudo vgextend my_volume /dev/sdf
+		- sudo vgreduce my_volume /dev/sdf
+		- sudo pvremove /dev/sdf    .
+		- sudo lvcreate --size 2G --name partition1 my_volume
+		-
+		-
+		-
 	-
