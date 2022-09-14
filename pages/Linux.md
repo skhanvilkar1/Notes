@@ -989,11 +989,11 @@
 		- `sudo pvcreate /dev/sdc /dev/sdd`
 		- `sudo pvs` --> see what physical volumes are currently attached
 		- `sudo vgcreate my_volume /dev/sdc /dev/sdd` --> adding two disks to volume
-		- sudo pvcreate /dev/sdf
-		- sudo vgextend my_volume /dev/sdf
-		- sudo vgreduce my_volume /dev/sdf
-		- sudo pvremove /dev/sdf    .
-		- sudo lvcreate --size 2G --name partition1 my_volume
+		- `sudo pvcreate /dev/sdf`
+		- `sudo vgextend my_volume /dev/sdf`
+		- `sudo vgreduce my_volume /dev/sdf`
+		- `sudo pvremove /dev/sdf`
+		- `sudo lvcreate --size 2G --name partition1 my_volume`
 		-
 		-
 		-
