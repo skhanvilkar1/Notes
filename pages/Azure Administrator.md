@@ -100,6 +100,7 @@
 		  }
 		  ````
 	- **Azure Bicep**
+	  collapsed:: true
 		- Azure Bicep is a domain-specific language (DSL) using declarive syntax to deply Az resources.
 		- Bicep has simpler syntax, modules to break complexity and bring resuablitiy, automatic dependency management,
 -

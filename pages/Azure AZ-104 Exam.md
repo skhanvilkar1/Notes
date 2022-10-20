@@ -2,10 +2,10 @@
   collapsed:: true
 	- How to use Azure to secure your identities and understand how users and groups are implemented in Azure AD.
 	- Azure Active Directory
+	  collapsed:: true
 		- Cloud based identity and directory management service enabling access to Azure services and other SaaS solutions like Microsoft 365, DropBox, Salesforce etc.
 		- Self service options like password reset, authentication, SSO, device management, hybrid identities etc. On-prem applications etc.
-		- AD concepts 
-		  collapsed:: true
+		- AD concepts
 			- Identity  - Object that can be authenticated. User, group or service principals (service accounts)
 			- Account - Associate data attributes to an identity we call it account. Example location, department and phone number of user makes that identity an Account.
 			- Azure AD Account  - Accounts created in Azure AD is called Azure AD account
@@ -95,6 +95,7 @@
 		- You need an invite from Tenant admin to join another Tenants.
 	-
 - Azure Subscriptions
+  collapsed:: true
 	- Need subscription to create resources. All charges of all resources made are charged to subscription.
 	  Hence Azure subscription acts like a billing boundary for usage.
 	- Resources deployed are mapped to Azure Subscription
@@ -103,7 +104,6 @@
 	- An account can have multiple subscriptions
 	- Any identity part of Azure AD or trusted MS Cloud service can sign up for a subscription.
 	- Different types
-	  collapsed:: true
 		- Enterprise Agreements - 500 or more users and devices. Offers services and licensing at discounted rates. Pre payment required
 		- Pay-as-you-go subscription - Ideal for small size org. Monthly billing
 		- CSP - Cloud Solution Provider - Licensed by microsoft partner. managed by Microsoft partners
@@ -118,5 +118,194 @@
 		- Root Management group is created by default and you have upto 6 levels of nested groups excluding the root group.
 		- Each subscription can contain one or more resources.
 		- Hierarchy helps in implementing polices 
-		  Management Groups > Subscriptions > Resource Groups > Resources
+		  Management Groups (can have nested groups, excluding root up to 6 levels)> Subscriptions > Resource Groups > Resources
+	- RBAC (Role Based Access Control) - administrators to grant access to Azure resources
+		- Three questions 1. Who? 2. What? (role definition, what ops can be performed) 3. Where ? (where we want to provide the access, defines boundaries) >> Role assignment .
+		  **Max 2000 role assignments in each subscription**
+		- Follow principle of Least privilege
+		- Build-in roles - Owner, Contributor, Reader and there are custom roles
+		- Scope  -> role assigned at Management groups get inherited to its Subs, to its resources groups and down to resources. It trickles down
+		- AZURE RBAC vs AZURE AD ROLES
+		  ````
+		  | Azure RBAC                                                                  | Azure AD Roles                                                                     |
+		  |-----------------------------------------------------------------------------|------------------------------------------------------------------------------------|
+		  | Used to manage access to AZ resources                                       | Used to manage AZ AD features                                                      |
+		  | Scope includes managment groups, subscriptions, resource groups, resources  | Scope is at AZ AD Tenant level                                                     |
+		  | Role assignment can be managed via Azure Powershell Azure CLI ARM Templates | Roles can be managed via Azure Portal MS365 admin Microsoft Graph API              |
+		  | Examples include Owner Contributor, Reader, User Access Administrator       | Examples include Global Administrator, Billing Administrator, Global Reader, etc.  |
+		-
+		- ![image.png](../assets/image_1665480398277_0.png)
+	- Built-in Roles -> Offered by Azure. 100s of build in roles.
+		- Four fundamental roles 
+		  1. Owner -> Gives full access to all resources, and can delegate access to other people.
+		  2. Contributor -> All access but cannot delegate
+		  3. Reader -> Read access to all resources 
+		  4. User Access Administrator -> Able to give users access to different Azure resources
+		- There can be scenarios where we cannot use fundamental roles
+		  We can fine tune roles called custom roles here
+		- Can be done by AZ CLI, REST API, AZ PowerShell, Azure Portal
+		- Each directory can have 5000 custom roles
+		- We can assign custom roles to users, groups, service principals to any scope.
+- **Azure Tags**
+  collapsed:: true
+	- Adding metadata to our subscription groups, resource groups and resources
+	- Helps in logically filter out our resources for management purposes.
+	- No. of characters is limited to 512 characters, values is limited to 256. Max tags allowed 50.
+	- Cost management - Tags can be used to filter Azure usage and cost management. Tags added to resources propagated to billing system.
+	- Go to resource (object) you want to tag and add a tag.
+	- ![image.png](../assets/image_1665970143273_0.png)
+	- You can use tags to filter as well.
+	- Use CLI or PowerShell to automate tagging.
+	- We can make tags inherited only by using Azure policies , by default its not. Only tags at resource levels can be used in billing level
+- **Resource locks**
+  collapsed:: true
+	- Avoids accidental changes.
+	- Support inheritance
+	- Read only locks -> cannot be modified
+	- Delete locks -> Ideal for resources you want to modify but do not delete
+	- Resource groups > Locks > Add lock
+	- Inherited to all resources inside Resource Group.
+- **Analyzing cost**
+  collapsed:: true
+	- Azure Cost Management to analyze cost
+	- Cost Analysis, Can connect AWS Cost
+	- Budget and recommendations
+	- Export data to CSV , schedule reports
+- **Cost Savings**
+  collapsed:: true
+	- Azure Reserved Instances (RI) -> pay upfront for 1 or 3 years
+	- Azure Hybrid Benefit -> (AHUB) -> license cost cheaper
+	- Credits -> Visual Studio Enterprise / Professional
+	- Regions pricing is different , but should not violate compliance or performance workloads
+	- You can set Budgets
+	  ![image.png](../assets/image_1665970930554_0.png)
+	- You can create budgets , export budgets and reports etc.
+- **Azure Policies** -> create manage and assign policies , to achieve compliance 
+  collapsed:: true
+	- Four points
+	  1. Definition is a JSON document which is used to fine policy and its effect. 
+	  2. Scope
+	  3. Assignment -> process of assigning a policy
+	  4. Compliance -> evaluate compliance
+	- Usecases
+		- Allowed resource types
+		- Allowed Virtual machine SKUs -> users can only use set no. of types of VM skus
+		- Allowed locations -> Define set of cloud locations where we can deploy resources
+		- Require Tags -> enforce tags
+		- Inherit tags
+		- Allowed resource groups locations
+		- Not a complete list here
+	- Initiative
+		- ![image.png](../assets/image_1665971370672_0.png)
+		- chain these policies together and assign as single unit called Azure Initiative.
+		- Policy takes precedence. Takes around 30 mins to take effect.
+		- How to valuate compliance --> go to policy pane
+- **Virtual Networks**
+	- Basic fundamental building resource of Azure
+	- Representation of cloud Network. AZ Virtual Network helps us create and manage networking in Auzre
+	- Dedicated instance
+	- Hybrid scenarios
+	- Connectivity between Azure Service and Azure VMs and enables AZ VMs to connect internet.
+	- **Virtual network Concepts**
+	  collapsed:: true
+		- Needs a subscription to create a VNET (Subscription > Region > VNet)
+		- Next we need a Region. Region represents a set of datacenters which are part of different availability zones.
+		- Within the region we can create Azure VNET , Each virtual network we create should have a address space. Can be Private or Public. Do not let Azure address space overlap with your on-prem or virtual network
+		- Subnet -> Subnet helps us to sgement VNet address space to smaller group.
+	- **Private IP addresses**
+	  collapsed:: true
+		- Used within AZ VNet and hybrid scenarios including VPN Gateway and ExpressRoute connections
+		- Allocation methods
+		  1. Static allocation - Does not change even if instance is rebooted 
+		  2. Dynamic IP addressing - Dynamically allotted to address pool.
+	- **Public IP addresses**
+	  collapsed:: true
+		- With help of public addresses we can use with interfacing with Public Internet and AZ services
+		- Allocation Types - Static & Dynamic
+		- SKU : Basic and Standard 
+		  | Feature       | Basic SKU                                                                        | Standard SKU                                                       |
+		  |---------------|----------------------------------------------------------------------------------|--------------------------------------------------------------------|
+		  | IP Allocation | Static / Dynamic                                                                 | Static                                                             |
+		  | Security      | By default, open                                                                 | By default, closed                                                 |
+		  | Resources     | Virtual Machines NIC, VPN Gateways,  Public Load balancers, Application Gateways | Virtual Machine NICs,  Public Load Balancers, Application Gateways |
+		  | Redundancy    | No zone redundancy                                                               | Zone redundant                                                     |
+		- Azure reserves 5 IP addresses in each network, Reserved IPs are used for Network address, Default gateway, 2 for DNS and 1 for broadcast
+		- To create Public address , go to Public IP addresses
+		  ![image.png](../assets/image_1665973885536_0.png)
+	- **User Defined Routes**
+	  collapsed:: true
+		- What are System Routes -> created by default
+		  1. Communication between VMs in the same subnet
+		  2. Communication between VMs in different subnets in same virtual Network (VNet)
+		  3. Communication from VM TO INTERNET -> But by default blocked by Network policy.
+		  4. Site-to-Site communication using VNet gateways
+		- User-Defined Route
+			- Route tables help you to define User Defined Routes
+			- NVA - Network Virtual Appliance
+		-
+		-
+	- Service Endpoints 
+	  collapsed:: true
+		- We may have to maintain a list of public address to access storage accounts (example). So hard to maintain a whitelist
+		- When we switch to Service Endpoint -> you can directly add workload private IP subnet
+		- Better security
+		- Leverages Microsoft Backbone network
+		- Ease of Setup and management.
+		- Bottom line - A service exposed via a Public IP address on your Azure network can be accessed by your other AZ services (any network), without themselves having to configure a public IP
+		- ![image.png](../assets/image_1666073623984_0.png)
+	- **Private Link**
+	  collapsed:: true
+		- Above example , destination is always public.
+		- We create a private endpoint, which communicates with exposed public endpoint destination via a private link . VM feels it connects to private endpoint
+		- Traffic remains in micrsoft network
+		- Seamless integration with on-prem and peered networks
+		- Eliminates risk of data exfiltration
+		- Direct availability in Azure VNets.
+		  ![image.png](../assets/image_1666073942285_0.png)
+		- True Private connectivity.
+		- When we create a private endpoint , it automatically creates a DNS zone and its is attached to our virtual network so instead of resolving to public ip, your destination resolves to private IP via DNS
+	- **Azure DNS**
+	  collapsed:: true
+		- Easy service to host DNS solutions
+		- Able to do DNS hosting, create multiple records
+		- Zone name should be unique within resource group.
+		- Delegated DNS zones in on-prem that can provide AZ DNS servers for name resolution
+		- Records sets -> max allowed is 20 and need to be unique.
+		- Azure DNS is a global service
+		- >> check DNSData View.
+	- **Private DNS Zones**
+		- Name resolutions for services deployed on Azure Virtual Network
+		- Implement name resolution across VNets.
+		- This is also a global service. only metadata needs resource location.
+		- we can establish name resolution in our Virtual Networks. common DNS Zones
+		- Just for name resolution and not communication between Networks!!
+	- ^^Network Security Groups^^
+		- Network Security groups are called NSG.
+		- With help of NSG we can **filter** traffic , operates at layer 4 and allows to filter
+		- **Rule sets** - NSG comprises a set of priority based rules that can be used to allow or deny inbound or outbound traffic
+		- **Association** -> NSGs can be associated to subnets and network interfaces. You can associate _multiple_ subnets and network interfaces to single NSG
+		- **Evaluation**  -> NSGs applied at subnet and network interface as evaluated separately. 
+		  Traffic requires "allow" rule at both levels to be admitted.
+		- ^^Network Security Groups Rules^^
+		  collapsed:: true
+			- Rules are evaluated based on priority.
+			- Default priority can be overriden with high priority rules.
+			- 65000 number and onwards rules cannot be modified
+			- 100 to 64999 allowed to be written. Lower number higher priority
+		- Effective Security Rules
+		  collapsed:: true
+			- Effective -> based on evaluation of nic and subnet level NSGs
+			- Read about service tags  (?)
+		-
+		-
+	- Azure Firewall
+		- Highly scalable and available - taken care by Azure
+		- Layer 7 firewall as a service
+		- Redundancy - spans multiple Availability zones.
+		- Multiple types of rules supported - Network rules, NAT rules, Application rules
+		- Threat Intelligence - Deny traffic from and to malicious IP addresses
+		- Support Multiple Public IPs
+		- Azure firewall needs a dedicated subnet, as it needs to scale for freedom of scaling
+		- place firewall in central virtual network , acting like a hub (hub and spoke model
+		- Can be extended to on-premises network as well
 	-
