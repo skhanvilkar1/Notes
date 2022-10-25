@@ -201,6 +201,7 @@
 		- Policy takes precedence. Takes around 30 mins to take effect.
 		- How to valuate compliance --> go to policy pane
 - **Virtual Networks**
+  collapsed:: true
 	- Basic fundamental building resource of Azure
 	- Representation of cloud Network. AZ Virtual Network helps us create and manage networking in Auzre
 	- Dedicated instance
@@ -309,3 +310,45 @@
 		- place firewall in central virtual network , acting like a hub (hub and spoke model
 		- Can be extended to on-premises network as well
 	-
+- **Configure VMs**
+	- Shared responsibility model - Responsibility shared by cloud provider and customer
+	- Virtual Machines are Infra as a Service solution -> IaaS
+	- Physical Hosts, Physical Networks and Physical Datacenter -> Managed by Cloud Provider
+	- Customer is responsibility is for OS , App, Updates etc.
+	-
+	-
+	- Virtual Machine Planning
+		- Networking -> Plan network space based on no. of VMs you plan to create. Make VNet address space that do not overlap
+		- Naming -> Naming convention helps us recognize VMs.
+		- Location -> You need to check availability of VM sizes in Azure region. Azure has 60+ regions.
+		  You might have to take care of compliance and performance here
+		- Pricing -> Consider models such as Pay-As-You-Go and Reserved Instances. Licensing cost can be reduced by using Azure Hybrid Benefit. 
+		  Spot VMs are cheaper. Licensing cost on OS as well. AZHB reduces it
+	- Managing VM Machine Sizing 
+	  | Type                   | Machine                     | Sizing                                                                                      |
+	  |------------------------|-----------------------------|---------------------------------------------------------------------------------------------|
+	  | General Purpose        | B, Dsv3, Dv3, Dasv4         | Balanced CPU to memory ratio. Ideal for testing and development                             |
+	  | Compute Optimized      | F,Fs, Fsv3, FX              | High CPU to Memory ratio. Good for medium traffic web servers, batchprocesses.              |
+	  | Memory Optimized       | Esv3, Ev3, Easv4, Eav4 etc. | High memory to CPU ratio. Great for relational databases                                    |
+	  | Storage Optimized      | LSv3                        | High disk throughput and IO ideal for Big Data, SQL, NoSQL dbs                              |
+	  | GPU                    | NC, NCv3, NCv4, NCasT4_v3   | Specialized VMs targeted for heavy graphic rendering                                        |
+	  | HPC                    | HB, HBv2, HBv3, HC, H       | Our fastest and most powerful CPU machines with optional throughput network interfaces      |
+	  | Confidential computing | DCsv2, DCsv3, DCdsv3        | Confidential computing allows you to isolate your sensitive data while its being processed. |
+	- Virtual Machine Storage
+		- VMs also needs Disk. VMs need disk. Min two disks - OS disk and Temp Disk. We can add data disk
+		- OS disk is pre-installed. Windows mounted as C: drive. Linux as /dev/sda drive
+		- Temp disk has page files or swap files. if you redeploy or resize, data is cleared. Reboot does not clear data
+		- Data disk -> add to store application data or critical data. You can choose label
+		- Size of VM is important, as it determines no. of data disks you can add.
+		- Both OS disk and Data disk is created on Azure Blob Storage. However temporary disk is directly attached to Host OS like OS disk. 
+		  Azure blob storage is a storage service provided by Azure
+		- Performance Tiers - HDD and SSD. 
+		  Standard HDD - Cheapest option. 
+		  Premium SSD is required from IO intensive applications.
+		- Management 
+		  When creating VMs you can choose Managed disks or unmanaged disk. MS recommends using managed disks
+	- How to create a VM?
+		- AZ portal -> VM creation wizard
+		- AZ powershell commands
+		- AZ CLI
+	- Demo on AZ VM creation.
