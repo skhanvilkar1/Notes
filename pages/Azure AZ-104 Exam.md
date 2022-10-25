@@ -45,7 +45,6 @@
 			- Azure Active Directory > Users - you will see Bulk Operations option, download CSV Template
 			- You can restore DELETED users by going to Users > Deleted users option
 	- Azure AD Join
-	  collapsed:: true
 		- We can uses Azure AD join to manage our corporate assets (similar to domain join in ADDS)
 		- IT admins make sure devices are secure and follow security standards
 		- Azure AD join offers SINGLE SIGN ON - app services and SAAS solutions
@@ -311,6 +310,7 @@
 		- Can be extended to on-premises network as well
 	-
 - **Configure VMs**
+  collapsed:: true
 	- Shared responsibility model - Responsibility shared by cloud provider and customer
 	- Virtual Machines are Infra as a Service solution -> IaaS
 	- Physical Hosts, Physical Networks and Physical Datacenter -> Managed by Cloud Provider
@@ -323,18 +323,20 @@
 		- Location -> You need to check availability of VM sizes in Azure region. Azure has 60+ regions.
 		  You might have to take care of compliance and performance here
 		- Pricing -> Consider models such as Pay-As-You-Go and Reserved Instances. Licensing cost can be reduced by using Azure Hybrid Benefit. 
-		  Spot VMs are cheaper. Licensing cost on OS as well. AZHB reduces it
-	- Managing VM Machine Sizing 
-	  | Type                   | Machine                     | Sizing                                                                                      |
-	  |------------------------|-----------------------------|---------------------------------------------------------------------------------------------|
-	  | General Purpose        | B, Dsv3, Dv3, Dasv4         | Balanced CPU to memory ratio. Ideal for testing and development                             |
-	  | Compute Optimized      | F,Fs, Fsv3, FX              | High CPU to Memory ratio. Good for medium traffic web servers, batchprocesses.              |
-	  | Memory Optimized       | Esv3, Ev3, Easv4, Eav4 etc. | High memory to CPU ratio. Great for relational databases                                    |
-	  | Storage Optimized      | LSv3                        | High disk throughput and IO ideal for Big Data, SQL, NoSQL dbs                              |
-	  | GPU                    | NC, NCv3, NCv4, NCasT4_v3   | Specialized VMs targeted for heavy graphic rendering                                        |
-	  | HPC                    | HB, HBv2, HBv3, HC, H       | Our fastest and most powerful CPU machines with optional throughput network interfaces      |
-	  | Confidential computing | DCsv2, DCsv3, DCdsv3        | Confidential computing allows you to isolate your sensitive data while its being processed. |
+		  Spot VMs are cheaper. Licensing cost on OS as well. AZHB reduces it.
+		- ^^Confidential computing offers encryption for data-in-use and it’s ideal for organization that handle sensitive data.^^
+	- Managing VM Machine Sizing
+		- | Type                   | Machine                     | Sizing                                                                                      |
+		  |------------------------|-----------------------------|---------------------------------------------------------------------------------------------|
+		  | General Purpose        | B, Dsv3, Dv3, Dasv4         | Balanced CPU to memory ratio. Ideal for testing and development                             |
+		  | Compute Optimized      | F,Fs, Fsv3, FX              | High CPU to Memory ratio. Good for medium traffic web servers, batchprocesses.              |
+		  | Memory Optimized       | Esv3, Ev3, Easv4, Eav4 etc. | High memory to CPU ratio. Great for relational databases                                    |
+		  | Storage Optimized      | LSv3                        | High disk throughput and IO ideal for Big Data, SQL, NoSQL dbs                              |
+		  | GPU                    | NC, NCv3, NCv4, NCasT4_v3   | Specialized VMs targeted for heavy graphic rendering                                        |
+		  | HPC                    | HB, HBv2, HBv3, HC, H       | Our fastest and most powerful CPU machines with optional throughput network interfaces      |
+		  | Confidential computing | DCsv2, DCsv3, DCdsv3        | Confidential computing allows you to isolate your sensitive data while its being processed. |
 	- Virtual Machine Storage
+	  collapsed:: true
 		- VMs also needs Disk. VMs need disk. Min two disks - OS disk and Temp Disk. We can add data disk
 		- OS disk is pre-installed. Windows mounted as C: drive. Linux as /dev/sda drive
 		- Temp disk has page files or swap files. if you redeploy or resize, data is cleared. Reboot does not clear data
@@ -348,7 +350,151 @@
 		- Management 
 		  When creating VMs you can choose Managed disks or unmanaged disk. MS recommends using managed disks
 	- How to create a VM?
+	  collapsed:: true
 		- AZ portal -> VM creation wizard
-		- AZ powershell commands
+		- AZ PowerShell commands
+			- `New-AzVM -ResourceGroup "RGName" -Name "VM-PS" -VirtualNetworkName "ps-vnet" -Subnet "default" -SecurityGroupName "ps-nsg"`
 		- AZ CLI
-	- Demo on AZ VM creation.
+			- `az vm create -n vm-from-cli -g from-cli --image UbuntuLTS --admin-username swapnil --admin-password "P@$$w0rd123"`
+			-
+	- Connecting to Virtual Machines
+		- 3 options 1. Public IP 2. Jumpbox 3. Azure Bastion
+		- 1. Public IP - connecting directly to assigned public IP to VM . Associate Public IP to VM nic interface and use NSG to allow connection
+		  2. Jumpbox - instead of creating public IP, we create one more subnet in VNet. Then create a VM in that subnet, use System Route to establish connectivity between VM in this subnet to original subnet. 
+		  Customers can connect to jumpbox which will have Public IP configured.
+		  3. Bastion host - managed service. From AZ portal, users can connect to Bastion host , subnet has to be named as AzureBastionSubnet.
+		- **^^WinRM is used to take command line connectivity to Windows VMs, the default port used by WinRM is 5986.^^**
+	- Configuring High Availability
+	  collapsed:: true
+		- Azure resources will face downtime.
+		- In AZ VM can be impacted by - Unplanned Hardware Maintenance, Unexpected Downtime and Planned Maintenance.
+		- For Unexpected downtime (cannot be predicted by Azure) -> Azure will heal your VM by redeploying your VM. But will cause some downtime or loss of data
+		- Planned maintenance - On AZ infra can be done without any downtime.
+		  collapsed:: true
+		  
+		  
+		  Geography -> Place where there are multiple Azure regions. Every Geography will contain atleast 1 DataCenters. 
+		  These Datacenters are grouped together are called as Availability Zones. 
+		  All AZs are isolated from each other in one region so if one AZ is down another is available. 
+		  
+		  Availability Sets -> if we don't specify any redundancy , AZ will auto select on which host to deploy . No control with user. 
+		  AZ is a concept where you get to deploy your VM and improve HA. 
+		  When you move Availability set ---> SLA 99.95% as per Azure
+			- Fault Domain in Availability Sets -> Single VM is single point of failures. Availability sets 99.95% SLA provided. 
+			  Fault domain do not share common networking , power and cooling. We can protect our VMs from hardware failures.
+			- Update Domain -> MS requires to perform planned maintenance. Physical servers will go reboot. 
+			  MS ensures that only one update domain is rebooted at one time. Hence all servers do not go at one time. 
+			  Default update domain 5 , can go upto 20 Update Domains.
+			  
+			  We need atleast 2 VMs to get SLA promised by MS. 
+			  
+			  IF ENTIRE DC GOES DOWN, ALL OFFLINE - > NO USE OF FAULT OR UPDATE DOMAINS.
+			- This is where we have Availability Zones help us.
+				- We have to specify which zone we have to deploy VM to. 
+				  Create VM > Pick Subscription > Create RG is required > Select Zone 1,2 or multiple -> based on Zone selection MS will place total no. of VMs in that zone.
+				  Ensure you have a Loadbalancer to distribute queries to each zone.
+		-
+	- Virtual Machine Scale Sets.
+		- Vertical Scaling -> increasing compute power is called this. Usually manual
+		- Horizontal scaling -> increasing no. of instances is horizontal. Usually automated. Based on schedule, metrics or on-demands.
+		- Scale sets can increase or decrease based on demand.
+		- Distribute VMs in a scale set across different Availability zones. also called VMSS
+		- Orchestration mode -> (?)
+		- Note that Availability Zones is not available in all regions
+		  background-color:: #497d46
+		-
+		- Scaling Policy Manual v/s Automated
+			- Scale IN and Scale Out both need to be specified.
+- **Load Balancing**
+  collapsed:: true
+	- Azure Load Balancer -> Layer 4 LB
+	  collapsed:: true
+		- Every Load balancer has a front end which receives a request and has a backend. Frontend and Backend is connected by a Load balancing rule.
+		- Layer 4 lb. Supports VM and VMSS as backend
+		- Two SKUs : Standard and Basic SKU
+		- Supports all TCP and UDP protocols
+		- Security - NSGs managed
+	- Basic LB is for testing and development
+	- Standard is for production scenarios.
+	  | Features          | Basic                     | Standard                                       |
+	  |-------------------|---------------------------|------------------------------------------------|
+	  | Backend pool size | upto 300 instances        | Up to 1000 instances                           |
+	  | Health probes     | HTTP, TCP                 | TCP, HTTP, HTTPS                               |
+	  | Redundancy        | Not available             | Zone redundant, zonal Redundant                |
+	  | Multiple Frontend | Inbound                   | Inbound and outbound only                      |
+	  | Security          | Open default. NSG options | Closed default, unless traffic allowed by  NSG |
+	  | SLA               | NA                        | 99.99%                                         |
+	- Terms of connectivity
+	  1. Public Load balancer - Ideal for public facing. have a public IP address. 
+	  incoming traffic public ip and port number mapped to private IP and port number of backend servers 
+	  With help of load balancing rules , we can distribute traffic across backend servers
+	  Used in all public facing workloads requiring load balancing.
+	  2. Internal Load balancer
+	  Internal is ideal for internal workloads. No public IP address
+	  incoming traffic inside virtual networks or from a VPN that can be distributed across backend servers. Not exposed to internet.
+	- Load Balancer rules 
+	  collapsed:: true
+		- Load balancing rules. We can create frontend to backend IP port mapping and traffic is distributed
+		- Inbound NAT rule : Front end IP port combination is used to send traffic to IP and port of designated VMs only.
+		- Outbound rule : Allows instances in backend pool to communicate with internet or endpoints.
+	- Session Persistence
+		- 1. None (default) : 5-tuple hash. Five tuples comprises of Source IP, Source Port, Destination IP, Destination Port and protocol. Based on hash of these values its routed to vm. if any values changes hash changes
+		  2. Client IP : 2-tuple, has of source IP and destination IP is used to route traffic. Request handled by Same VM if source IP or destination IP do not change
+		  3. Client IP and Protocol : 3-tuple hash, where hash of source IP, destination IP and protocol is used to route traffic to VM
+	- Health probes (?)
+	-
+	- Azure Application Gateway - Layer 7 Load Balancer
+		- Uses roundrobin to distribute requests - managers HTTP, HTTPS/2 and WebSocket
+		- Web Application Firewall for threats and vulnerabilities
+		- Routing features -> URL redirect, SSL terminiation, Rewrite HTTP headers, Custom error messages
+		- Backend pools -> AZ VM, AZ VMSS, Azure App services, Even on-prem servers.
+	-
+		- Components -> Front End IP ( Can have public IP or private IP or both. Cannot have more than 1 pip or private IP)
+		  Listener - ^^Basic and Multi-site^^ . Can handle certificates
+		  Port - SSL offloading 
+		  Rule - Acts like bridge between front end and backend
+		  Http setting -> 
+		  Backend pools -> Handles request
+		- Routing in App Gateways ->
+			- Path based routing -> optimized for different paths of URL. 
+			  Based on URL you can route to different set  of instances
+			- Multi-Site -> based on different URLs/domain etc.
+			- ^^Application Gateway's require a dedicated subnet called - ApplicationGatewaySubnet^^
+			- We can use cookie affinity , SSL termination etc in app gateway.
+	-
+	- Other Load Balancing solution
+		- Azure Front Door - Global Solution 
+		  Leverages MS CDN solution. We can deploy app in multi region and use AFD 
+		  Same Set of features as App Gateway. 
+		  AZ Front Door is Global , App Gateway is regional
+		- AZ Traffic Managers 
+		  DNS based load balancer 
+		  Traffic coming to public facing application can be distributed across the globe 
+		  Can be used for AZ or non-AZ environments.
+	-
+	- Comparing all LB solutions.
+		- | Feature          | Application gateway                                                                                                    | Front Door                                                                                  | Load Balancer                                                                                   | Traffic Manager                                                                                                        |
+		  |------------------|------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+		  | Usage            | Optimize delivery from application server farms while increasing application  security with web application firewall.  | Scalable security-enhanced delivery point for global micro service-based web applications   | Balance inbound and outbound connections and requests to your applications or  server endpoints | Distribute traffic optimally to  services across global Azure regions providing  high availability and responsiveness  |
+		  | Protocols        | HTTP, HTTPS, HTTP2                                                                                                     | HTTP, HTTPS, HTTP2                                                                          | TCP, UDP                                                                                        | Any                                                                                                                    |
+		  | Internal Support | YES                                                                                                                    |                                                                                             | YES                                                                                             |                                                                                                                        |
+		  | Cross Region     | NO                                                                                                                     | YES                                                                                         | Preview                                                                                         | Yes                                                                                                                    |
+		  | Environment      | Azure, Non-Azure Cloud, On-PREM                                                                                        | Azure, NON-AZURE CLOUD, on-prem                                                             | Azure                                                                                           | Azure, Non-Azure Cloud, On-prem                                                                                        |
+		  | Security         | WAF                                                                                                                    | NSG,WAF                                                                                     | NSG                                                                                             |  -                                                                                                                     |
+		- Reference architecture examples from Microsoft please (?)
+	-
+	-
+	-
+- Azure Bastion
+	- Not every VM will have a public IP.
+	- Traditional approach is to have a jumpbox subnet and VM with Public IP. Added responsibility to harden and manage jumpbox machine
+	- Here AZ Bastion comes in picture.
+	- Create additional subnet - AzureBastionSubnet (name needs to same)
+	- Admins can connect to these VMs directly from portal connecting to Bastion service
+	-
+	- Direct RDP and SSH in AZ portal
+	- Public IP is not required - no need to maintain IP address
+	- No need to tweak NSGs. as Bastion connects to private IP address to VMs
+	- Port scanning protection
+	- Hardening - > A PaaS solution. Underlying is managed by MSFT
+	- Basic & Standard -> Standard enables premium features like connectivity at larger scale.
