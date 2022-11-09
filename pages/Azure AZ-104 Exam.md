@@ -408,7 +408,6 @@
 - **Load Balancing**
   collapsed:: true
 	- Azure Load Balancer -> Layer 4 LB
-	  collapsed:: true
 		- Every Load balancer has a front end which receives a request and has a backend. Frontend and Backend is connected by a Load balancing rule.
 		- Layer 4 lb. Supports VM and VMSS as backend
 		- Two SKUs : Standard and Basic SKU
@@ -432,8 +431,7 @@
 	  2. Internal Load balancer
 	  Internal is ideal for internal workloads. No public IP address
 	  incoming traffic inside virtual networks or from a VPN that can be distributed across backend servers. Not exposed to internet.
-	- Load Balancer rules 
-	  collapsed:: true
+	- Load Balancer rules
 		- Load balancing rules. We can create frontend to backend IP port mapping and traffic is distributed
 		- Inbound NAT rule : Front end IP port combination is used to send traffic to IP and port of designated VMs only.
 		- Outbound rule : Allows instances in backend pool to communicate with internet or endpoints.
@@ -460,7 +458,7 @@
 			  Based on URL you can route to different set  of instances
 			- Multi-Site -> based on different URLs/domain etc.
 			- ^^Application Gateway's require a dedicated subnet called - ApplicationGatewaySubnet^^
-			- We can use cookie affinity , SSL termination etc in app gateway.
+			- We can use cookie affinity , SSL termination, HTTP Header rewrite etc in app gateway.
 	-
 	- Other Load Balancing solution
 		- Azure Front Door - Global Solution 
@@ -486,6 +484,7 @@
 	-
 	-
 - Azure Bastion
+  collapsed:: true
 	- Not every VM will have a public IP.
 	- Traditional approach is to have a jumpbox subnet and VM with Public IP. Added responsibility to harden and manage jumpbox machine
 	- Here AZ Bastion comes in picture.
@@ -498,3 +497,132 @@
 	- Port scanning protection
 	- Hardening - > A PaaS solution. Underlying is managed by MSFT
 	- Basic & Standard -> Standard enables premium features like connectivity at larger scale.
+- VNet Peering
+  collapsed:: true
+	- By default VMs in one VNET can communicate with each other due to system routes.
+	- Global VNet peering and Regional VNet peering.
+	- How to establish connectivity between two different VNets via a private communication.
+	- VPN Gateway
+		- Used to establish Azure to Azure or Azure to Site connection as well.
+		- VPN SKUs -> Based on no. of connection and throughput required.
+		- Within same generation we can resize based on requirement
+		- Basic SKU (legacy) available for development and testing
+		- 1. Create GatewaySubnet in Both Virtual Networks, dedicated subnet to deploy gateways. Name should always be ^^GatewaySubnet^^
+		  2. VPN gateway to be deployed in this subnet - 40 mins time needed. Go to Virtual Network Gateway option on Azure portal.
+		  3. Establish connectivity between these Gateways using VNet-to-VNet connection. Create connections on both VPN Gateways.
+		- Varied latency when compared to Peering.
+		-
+	- Peering
+		- Peering advantage is we do not need any Gateways.
+		- When you create peering point in one VNet a reciprocal is also needed to be created (always at same time) in corresponding peered VNet.
+	- Difference
+		- | Property           | VNet Peering                                                             | VNet-to-VNet                                                                  |
+		  |--------------------|--------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+		  | No. of connections | Upto 500 VNet Peerings per VNet                                          | One VNet can have only one VPN Gateway  and connection count is SKU dependent |
+		  | Pricing            | Ingress + Egress                                                         | Gateway hourly cost + egress                                                  |
+		  | Encryption         | No Encryption. Software level is recommended                             | IPSEC / IKE                                                                   |
+		  | Bandwidth          | No restrictions                                                          | SKU depenedent                                                                |
+		  | Route              | Route via MS Backbone network but private                                | Routed via public Internet, however  encrypted                                |
+		  | Public IP          | No public IP or internet used                                            | Public IP involved                                                            |
+		  | Transitivity       | Nontransitive                                                            | Transitive (BGP Enabled)                                                      |
+		  | Initial Setup Time | Fast                                                                     | ~ 30-40 minutes                                                               |
+		  | Use Cases          | Data replication, database failover and other senarios Large backups etc | Any scenario where encryption needed, and latency bandwidth is not sensitive  |
+- Azure to On-premise Connectivity
+  collapsed:: true
+  2 options.
+	- Create a gatewaySubnet and deploy a gateway and establish a Site-to-site connectivity with a gateway device placed in premises
+	- Express Route -> Dedicated lines , Faster than VPN Gateway
+	- Point-to-Site -> Client devices to AZ Infra
+- Site-to-Site connection 
+  collapsed:: true
+	- On-prem site or Non-Azure site to Azure
+	- 1. Create a GatewaySubnet
+	  2. Create a VPN Gateway 
+	  3. Local Network Gateway (LNG) -> created in Azure providing fqdn of your on-prem device. Acts like a reference for your on-prem network
+	  4. On-premises VPN Device 
+	  5. Site-to-Site connection to be created in Azure, authenticate using a pre-shared key.
+- Point-to-Site connection
+  collapsed:: true
+	- We can download VPN profile to client devices and connect to VPN gateway
+	- Ideal for remote users who wish to connect to Azure VNet
+		- 1. GatewaySubnet 
+		  2. VPN Gateway
+		  3. P2S configuration
+		  4. Download VPN Client configuration to client machine
+		  5. Connect
+- Gateway Transit
+  collapsed:: true
+	- Imagine a scenario where we have many Site to site tunnels
+	- High cost and manageability issues. This is where Gateway Transit comes to picture
+	- Instead of creating many Site-To-Site connections, we will create a Hub Network
+	- Establish Peering connections between all VNets in Azure and Hub VNet
+	- From Hub VNet configure S2S connection to on-prem.
+	- Routes are automatically published by Azure to on-prem
+	- THIS IS GATEWAY TRANSIT ALSO CALLED HUB-SPOKE Architecture
+- High Availability
+  collapsed:: true
+	- Redundancy of VPN Gateway
+		- 1. Active/Standby mode: Default 
+		  Cost of Gateway will include two VPN Gateways.
+		  Downtime of few seconds to minutes.
+		  
+		  2. Active/Active mode : High Availability with no downtime.
+- Express Route
+  collapsed:: true
+	- Can be used to extend on-prem network to MS cloud.
+	- Connectivity provider. We can connect to Azure, MS 365, Office 365 etc using Express route
+	- Two peerings we can use
+	  1. Microsoft Peering - MS365, Dynamics 365, Azure Public Services (Public IPs)
+	  2. Azure Private Peering for Virtual Networks
+	  ![image.png](../assets/image_1667209414815_0.png)
+	- Private Connectivity
+	- Traffic routed via partner networks and not Public Networks. 
+	  Secure, Low Latency, High Throughput, High Speed connection.
+	- Redundant L3 connectivity.
+	- Within geography available to all regions
+	- Bandwidth options vary from 50-100 GBps
+	- Local, Standard and Premium SKU -> Metered and Unlimited plans.
+	- Local SKUs you are charged under unlimited plan. unlimited outbound data transfer is free.
+	- With Standard and Premium SKU you have metered , unlimited plans, metered you are charged for outbound data transfer
+	- Premium add-ons for global connectivity
+	-
+	- Express Route connectivity Models - 4 types -> Learn by heart (*)
+		- 1. Co-located at cloud exchange -> L2 and L3 managed 
+		  2. Point to Point Ethernet connections -> L2 and L3 Managed
+		  3. Any-to-Any -> Managed L3 connectivity 
+		  4. Direct model -> Directly to MS global network from peering site.
+	- Co-existing Site-to-Site and Express Route.
+		- failover path
+		- Separate Gateways for communication always
+	-
+- Virtual WAN
+  collapsed:: true
+	- Similar to Hub-Spoke 
+	  ![image.png](../assets/image_1667210294234_0.png)
+	- **Hub Network replaced by Virtual WAN managed Service here.**
+	- Brings together all connections -> P2S, S2S, Virtual Network and ExpressRoute
+	- Seamless connectivity
+	- Advanced Architecture. Good for troubleshooting.
+	- Basic SKU and Standard SKU
+- **Azure Resource Manager**
+	- ARM is management layer. ARM makes sure it has everything to deploy the resource before it forwards it to Resource provider
+	- A way to deploy resources.
+	- Access controls, locks, tags, templates - previously ARM was known as Azure Service Manager (ASM). These were called classic resources.
+	-
+	- ARM Template -> declarative automation
+		- Chances of human errors removed. 
+		  Consistent and reusable. 
+		  linkable for complex deployments.
+		- Ways to use ARM Templates designs 
+		  1. all in one template
+		  2. nested templates --> advantage loosely coupled 
+		  3. deploy components in different resource groups.
+		- Components of ARM Templates
+		  1. $schema -> depending on scope schema will change. scopes are management group, subscriptions, resource groups etc.
+		  2. contentVersion -> for versioning your template. Also a mandatory field for ARM template
+		  3. parameters -> values you can provide as input during deployment. makes ARM template re-usable
+		  4. variables -> 
+		  5. functions -> repeatable code blocks.
+		  6. outputs -> displaying outputs to user after deployment , if you want to display something to user
+		-
+		-
