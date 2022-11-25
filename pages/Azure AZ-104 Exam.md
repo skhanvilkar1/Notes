@@ -1,8 +1,7 @@
-- Managing Azure Active Directory
+- **Managing Azure Active Directory**
   collapsed:: true
 	- How to use Azure to secure your identities and understand how users and groups are implemented in Azure AD.
 	- Azure Active Directory
-	  collapsed:: true
 		- Cloud based identity and directory management service enabling access to Azure services and other SaaS solutions like Microsoft 365, DropBox, Salesforce etc.
 		- Self service options like password reset, authentication, SSO, device management, hybrid identities etc. On-prem applications etc.
 		- AD concepts
@@ -11,7 +10,6 @@
 			- Azure AD Account  - Accounts created in Azure AD is called Azure AD account
 			- Azure AD Tenant or directory - Dedicated instance of Azure AD that is created during sign up of any Microsoft cloud service subscription. Tenant and Directory means same. We can have one or multiple directories based on requirement.
 		- Azure AD vs Active Directory Domain Services (ADDS)
-		  collapsed:: true
 			- Two different services. Installing ADDS in Azure is not Azure AD
 			- Azure AD is cloud based or web based , so its queried using HTTP or HTTPS. ADDS using LDAP protocol for querying
 			- AZ AD uses SAML, WS-Federation, Open ID and OAuth for authorization. ADDS uses KERBEROS for authentication
@@ -54,7 +52,6 @@
 		- Device Management - Admins can check complaince and restric
 		- On-prem Access - Seamless access to on-prem apps and leverage single sign on
 	- Self-Service Password Reset (SSPR)
-	  collapsed:: true
 		- Enables users to reset password without need to call IT helpdesk
 		- Setup Multiple methods to reset
 		- Premium P2 license
@@ -71,7 +68,6 @@
 		-
 		-
 	- Group Accounts
-	  collapsed:: true
 		- Security groups -> assign a role, inherited by all users of group
 		- MS 365 groups -> offers collab. opportunities
 		  
@@ -82,7 +78,6 @@
 		- Dynamic device - will dynamically check device properties and will remove if attributes match remove rule. Not available for MS 365 groups
 		-
 	- Multi-Tenant Environments
-	  collapsed:: true
 		- Each Tenant or directory represents an organization. An org can have one or more tenants.
 		- Azure AD there is no parent child relationship
 		- Each Azure AD org is fully independent. Each tenant is considered separate
@@ -605,6 +600,7 @@
 	- Advanced Architecture. Good for troubleshooting.
 	- Basic SKU and Standard SKU
 - **Azure Resource Manager**
+  collapsed:: true
 	- ARM is management layer. ARM makes sure it has everything to deploy the resource before it forwards it to Resource provider
 	- A way to deploy resources.
 	- Access controls, locks, tags, templates - previously ARM was known as Azure Service Manager (ASM). These were called classic resources.
@@ -626,3 +622,130 @@
 		  6. outputs -> displaying outputs to user after deployment , if you want to display something to user
 		-
 		-
+- Desired State Configuration
+  collapsed:: true
+	- DSC is for complex deployments. supports reboot as well. Note that reboots are not supported in custom extensions if they are in middle of script
+	- Easy to read. declarative. Stored in PS1 format
+	- Use DSC where CSE (Custom Script Extensions ) is not supported
+- Storage Accounts
+  collapsed:: true
+	- Microsoft solution for object storage, file storage, message queue and a NoSQL store
+	- massively scalable
+	- High availability and durability, Scalability, Security and Access Management.
+	-
+	- There are two performance tiers 
+	  1. Standard -> HDD disks
+	  2. Premium -> SDD disks
+	- Both can be used as storage for VMs. Also to store unstructured data and structured data.
+	-
+	- Storage Services.
+		- 1. Container -> object storage used to store videos, files, binaries etc -> Blobs. As a back or archival storage.
+		  2. File -> Azure Files is managed Azure file share. We can mount it to AZ or non AZ resources
+		  3. Table -> Structured non-relational data
+		  4. Queue -> Message store for sending and receiving messages.
+	- Storage Account Types
+		- | Type               | Services                          | Performance Tiers | Replication Options                  |
+		  |--------------------|-----------------------------------|-------------------|--------------------------------------|
+		  | Blob Storage       | Blob                              | Standard          | LRS, GRS, RA-GRS                     |
+		  | General Purpose v1 | Blob, File, Queue, Table and Disk | Standard, Premium | LRS, GRS, RA-GRS                     |
+		  | General Purpose v2 | Blob, File, Queue, Table and Disk | Standard, Premium | LRS, ZRS, GRS, RA-GRS, GZRS, RA-GZRS |
+		  | Blob Block Storage | Blob                              | Premium           | LRS, ZRS                             |
+		  | File Storage       | Files                             | Premium           | LRS, ZRS                             |
+	- Storage Replication
+		- 1. LRS - Locally Redundant Storage -> Data is replicated in same datacenter across fault domain. 1 copy stored 3 times across different racks (simplified explanation). Hence is cheapest replication option. 11 9s durability. DC goes down data unavailable.
+		  2. ZRS (Zone Redundant Storage) -> Data is replicated across 3 different availability zones in same region. DC level issues mitigated. 12 9s durability. Region goes down , data is unavailable. 
+		  3. Geo Redundant Storage -> 
+		  We have a) Primary Region -> here data is replicated 3 times in a SINGLE Datacenter. 
+		  b)Data from primary is replicated to  Secondary Region -> even in secondary region data is replicated 3 times in single DC.
+		  Even if region goes down, data is available. 16 9s of durability.
+		  Secondary is available only in even of failover.
+		  4. RA GRS (Read-Only Geo Redundant Storage) -> Same as GRS. Difference is Secondary is always available for Read operations . In event of failure of primary region, write access to Secondary needs to be provided by some mechanism in application level.
+		  5. GZRS (Geo Zone Redundant Storage)-> In this replication its a mix of ZRS in Primary region and in Secondary Region is LRS.
+		  Secondary is only available after failover
+		  6. RA-GZRS -> Secondary is available for read requests. others same as above.
+		-
+	- Secure Storage endpoints.
+		- ![image.png](../assets/image_1668161410812_0.png)
+	- Security capabilities
+		- Encryption (Storage Service Encryption - SSE) -> all data is encrypted whether its blob, file, queue etc. 
+		  256 AES encryption. All done by Storage Service. Enabled by default , cannot be disabled
+		- Authentication
+		- Data in transit
+		- Disk Encryption (Azure Disk Encryption - ADE)
+		  Bitlocker for Windows. Keys are stored in Azure Key vault. 
+		  Encrypted backup. AES 256 encryption. 
+		  if OS and DD both are encrypted, slight performance impact.
+		- Shared access signature (SAS Keys) -> 
+		  2 512 bit keys for all storage accounts automatically. Can be used as authorization
+		  SAS is build on top of keys.
+		  1. Storage account keys - Two Keys provided by MS Azure. Be careful with keys. Only authorized people should have access. 
+		  2. Shared Access Signatures -> Concern with account key as its master key. 
+		  Instead of giving full access, fine tune keys with SAS.
+		  a) User delegation SAS -> works with Azure AD and applies only to blob.
+		  b) Account key
+		  c) Account SAS -> access to one or more storage services.
+		  3. Azure AD Authentication -> MS recommends for blobs, queues, tables.
+		- Anonymous access
+	- Administrating Azure Blob Storage & AZ files
+	  1. Azure File Share
+	  Creating Azure Files share -> 
+	  We can share AZ file share in VMs or non Azure VMs can mount AZ file shares 
+	  Supports Windows Linux and Mac OS computers. Azure provides easy scripts to mount file shares.
+	  Port 445 needs to be open for SMB traffic. 
+	  Storing tools, diagnostics data or files that needs to be shared with Teams.
+	  
+	  Azure File Sync
+	  Use SMB, FTPS, NFS to connect with your fileshare
+	  What you need -> Storage account, storage sync service, Sync Agent, Sync Groups, Server Endpoint and Cloud Endpoint. AFS can be part of only one Cloud Endpoint.
+	  
+	  Implementation -> 
+	  a. Deploy Storage Sync Server b. Prepare Windows File Server c. Installing File Sync Agent d. Registering Windows Server 
+	  
+	  2.Azure Containers (Blob Storage)
+	  Storage account > Container > Blob
+	  Block storage can be used to embed images or documents in webpage. 
+	  act as DR site 
+	  Backup and recovery and archiving. Store data for analysis (eg. PowerBI)
+- Storage Tiers
+  collapsed:: true
+	- Blob Access Tiers - major cost for AZ storage is no. of transactions and data stored.
+	  There are 3 tiers - HOT(Ideal for frequently accessed), COOL(not frequently accessed and stored for atleast 30 days), ARCHIVE (Ideal for that can tolerate several hours of retrieval latency and will remain the archive tier for atleast 180 days)
+	- Lifecycle Management -> Policy based transition , we can transition blobs to cooler period based on last modified date
+	  Delete blobs and snapshots. -> LCM can be used to delete blobs and blob snapshots.
+	  We can filter and apply policies to all blobs in storage or limit it with filters
+	  Target different types - blobs, snapshots, versions etc can be targeted
+	-
+- Managing Storage
+	- Import/Export Service - Not an online service. Ship Hard Drives from and to Azure Datacenter. 
+	  Import workflow
+	  a) Identify the data and use WAImportExport tool to prepare disks b) Create Import job in Azure portal referencing destination storage account. Upload Journal files c) Ship the drives to Azure datacenter and update the import job with tracking ID of the package d) Hard drives are delivered to the datacenter and drives are processed e) Data is copied from hard drive to the storage account f) Hard drives are shipped back to you.
+	- Azure Storage Explorer -> GUI Tool we can install to manage storage. 
+	  You can connect to Azure storage by signing in or SAS keys etc. Easily downloadable from public website.
+- Azure App Services
+	- App Service Plans -> App service plans defines a set of Compute resources required yo run our App service
+	- Performance Tiers  -> Like VMs, App Service Plans also come in different tiers. These tiers represents the performance, features, size and price you pay.
+	- Host multiple applications on single App Service plan.
+	- Regardless the number of apps you pay price for App Service plan
+	- 6 plans available
+		- Shared Compute (Free & Shared plans) -> Apps run on shared Azure VM infrastructure where your apps will be placed along side with other apps
+		- Dedicated Compute (Basic, Standard and Premium) -> Dedicated VMs will be provisioned and your apps will be running on that
+		- Isolated : Dedicated VMs will be provisioned in dedicated virtual networks.
+		- | Selected Features       | Free | Shared | Basic     | Standard  | Premium   | Isolated  |
+		  |-------------------------|------|--------|-----------|-----------|-----------|-----------|
+		  | Web, mobile or API apps | 10   | 100    | Unlimited | Unlimited | Unlimited | Unlimted  |
+		  | Disk Space              | 1 GB | 1 GB   | 10 GB     | 50 GB     | 250 GB    | 1 TB      |
+		  | Auto Scale              | -    | -      | -         | Supported | Supported | Supported |
+		  | Deployment slots        | 0    | 0      | 0         | 5         | 20        | 20        |
+		  | Max Instances           | -    | -      | Upto 3    | Up To 10  | Up to 30  | Up to 100 |
+	- App Service ?
+	  We can host web apps, API apps, mobile apps and serverless apps
+	  .NET, >NET core, Node.js, PHP, Java and even containerized application on App Service
+	- Fully managed PaaS solution
+	- CI/CD and Visual Studio Integration
+	- Market place Templates
+	- Security and compliance -> ISO, SOC, PC
+	- API and mobile like features
+	- Run Function Apps without need to provision additional feaures
+	-
+	- To run App Service we first need to create App Service plan!!
+	-
